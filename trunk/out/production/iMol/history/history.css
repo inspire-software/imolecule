@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2010.
+ * Author: Denis Pavlov
+ * Web: http://www.inspire-software.com/
+ * iMolecule is an open source projects that is distributed on AS IS basis with no warranty under Lesser GPL or MIT license
+ */
+
 /* This CSS stylesheet defines styles used by required elements in a flex application page that supports browser history */
 
 #ie_historyFrame { width: 0px; height: 0px; display:none }

@@ -12,5 +12,5 @@
   <file-specs>
     <path-element>src/iMol.mxml</path-element>
   </file-specs>
-  <output>C:/Documents and Settings/admin/IdeaProjects/iMol/out/production/iMol/iMol.swf</output>
+  <output>C:/dev/iMolecule/out/production/iMol/iMol.swf</output>
 </flex-config>

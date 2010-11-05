@@ -1,4 +1,11 @@
-/*!	SWFObject v2.2 <http://code.google.com/p/swfobject/> 
+/*
+ * Copyright (c) 2010.
+ * Author: Denis Pavlov
+ * Web: http://www.inspire-software.com/
+ * iMolecule is an open source projects that is distributed on AS IS basis with no warranty under Lesser GPL or MIT license
+ */
+
+/*!	SWFObject v2.2 <http://code.google.com/p/swfobject/>
 	is released under the MIT License <http://www.opensource.org/licenses/mit-license.php> 
 */
 
