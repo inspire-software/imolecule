@@ -1,0 +1,457 @@
+<?xml version="1.0"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+               xmlns:s="library://ns.adobe.com/flex/spark"
+               xmlns:mx="library://ns.adobe.com/flex/mx"
+               creationComplete="init()"
+               width="800"
+               height="600">
+    <fx:Style>
+         .moleculeName {
+            paddingTop: 2px;
+            paddingBottom: 2px;
+            paddingLeft: 2px;
+            paddingRight: 2px;
+            borderColor: #000000;
+            borderStyle: solid;
+            borderThickness: 1;
+         }
+    </fx:Style>
+    <fx:Script><![CDATA[
+
+        import dp.flex.imol.Math3D;
+        import dp.flex.imol.builder.MoleculeBuilder;
+
+        import dp.flex.imol.model.Atom;
+        import dp.flex.imol.model.Bond;
+        import dp.flex.imol.model.Molecule;
+
+        import dp.flex.imol.testdata.H20Water;
+        import dp.flex.imol.testdata.MIDECAMYCIN;
+
+        import mx.controls.Alert;
+        import mx.controls.Label;
+
+        import mx.core.Application;
+        import mx.core.FlexGlobals;
+
+        import org.papervision3d.cameras.Camera3D;
+        import org.papervision3d.core.geom.Lines3D;
+        import org.papervision3d.core.geom.renderables.Line3D;
+        import org.papervision3d.core.math.Number3D;
+        import org.papervision3d.materials.ColorMaterial;
+        import org.papervision3d.materials.special.Letter3DMaterial;
+        import org.papervision3d.materials.special.LineMaterial;
+        import org.papervision3d.objects.DisplayObject3D;
+        import org.papervision3d.objects.primitives.Cylinder;
+        import org.papervision3d.objects.primitives.Sphere;
+        import org.papervision3d.render.BasicRenderEngine;
+        import org.papervision3d.scenes.Scene3D;
+        import org.papervision3d.typography.Font3D;
+        import org.papervision3d.typography.Text3D;
+        import org.papervision3d.typography.fonts.HelveticaMedium;
+        import org.papervision3d.view.Viewport3D;
+
+        import flash.filters.DropShadowFilter;
+        import flash.filters.GlowFilter;
+
+        import spark.components.Label;
+
+        // Papervision Engine
+        private var viewport:Viewport3D;
+        private var scene:Scene3D;
+        private var camera:Camera3D;
+        private var renderer:BasicRenderEngine;
+
+        private var molRadius:Number = 0.4; // normalize radius of atoms
+        private var bondRadius:Number = 0.15; // normalize radius of bonds
+        private var molDistance:Number = 300; // half of stage
+
+        /** Camera */
+        private static const HALF_CIRCLE = 180;
+        private static const ORBIT_TICK = 2;
+        private static const PITCH_START = 90;
+        private static const YAW_START = -90;
+        private var camYaw:Number = YAW_START;
+        private var camPitch:Number = PITCH_START;
+        private var camDist:Number = 2000; // distance for non-ortho camera
+        private var camOrthoOriginal:Number = 1;
+        private var camTarget:DisplayObject3D = DisplayObject3D.ZERO;
+        /** Semaphores */
+        private var camOrbiting:Boolean = false;
+        private var camZooming:Boolean = false;
+
+        private var xAngle:int = 0;
+        private var yAngle:int = 0;
+
+        private var mouseOrigin:Point;
+
+        private function init():void {
+            this.mol = FlexGlobals.topLevelApplication.parameters.mol;
+            init3D();
+            mouseOrigin = new Point(); // original mouse position
+        }
+
+        private function init3D():void {
+            viewport = new Viewport3D(pv3dCanvas.width, pv3dCanvas.height, false, true);
+            pv3dCanvas.rawChildren.addChild(viewport);
+            viewport.buttonMode = true;
+
+            renderer = new BasicRenderEngine();
+            scene = new Scene3D();
+
+            camera = new Camera3D();
+            camera.ortho = true;
+
+            //dropShadowFilter = new DropShadowFilter(distance, angle, color, alpha, x blur, y blur, strength, quality, inner shadow boolean, knockout boolean, hide object boolean);
+            viewport.filters = [new GlowFilter(0xCCCCCC, 0.5, 5, 5), new DropShadowFilter(10, 45, 0x000000, .5, 5, 5, 1, 1)];
+
+            createObjects();
+            addEventListeners();
+        }
+
+        private function getMoleculeXML(name:String):XML {
+            var currentMolecules:XMLList = molecules.molecule;
+            for each (var item:XML in currentMolecules) {
+                if (item.@id == name) {
+                    return item;
+                }
+            }
+            return null;
+        }
+
+        private function createObjects():void {
+
+            var maxX:Number = 0;
+            var maxAtomX:Number = 0;
+            var maxY:Number = 0;
+            var maxAtomY:Number = 0;
+            var minX:Number = 0;
+            var minAtomX:Number = 0;
+            var minY:Number = 0;
+            var minAtomY:Number = 0;
+
+            scene.addChild(camTarget);
+
+            var letterMaterial:Letter3DMaterial = new Letter3DMaterial(0x000000, 1);
+            var font:HelveticaMedium = new HelveticaMedium();
+
+            var lines:Lines3D = new Lines3D();
+            camTarget.addChild(lines);
+
+            var builder:MoleculeBuilder = new MoleculeBuilder(mol, molecules);
+            var molecule:Molecule = builder.build();
+            moleculeName.text = molecule.name;
+
+            for each (var atom:Atom in molecule.atoms) {
+
+                // atom sphere
+                var atomRadius:Number = atom.radius * molRadius;
+                var atomOrigin:Number3D = Math3D.point(atom.x, atom.y, atom.z, molDistance);
+                var aSphere:Sphere = new Sphere(new ColorMaterial(atom.color), atomRadius, 14, 14);
+                aSphere.position = atomOrigin;
+                camTarget.addChild(aSphere);
+                // sphere label
+                var aLabel:Text3D = new Text3D(atom.name, font, letterMaterial);
+                aLabel.position = new Number3D(atomRadius * 1.5, atomRadius, 0);
+                aLabel.scale = 0.3;
+                aSphere.addChild(aLabel);
+
+                //trace("Atom [" + atom.name + "] x:" + aSphere.x + ",y:" + aSphere.y + ",z:" + aSphere.z);
+                // Bonds
+                for each (var bond:Bond in atom.bondsFrom) {
+                    var toAtom:Atom = bond.atomTo;
+                    var toAtomOrigin:Number3D = Math3D.point(toAtom.x, toAtom.y, toAtom.z, molDistance);
+                    var toAtomRadius:Number = toAtom.radius * molRadius;
+                    var atomBondRadius:Number = atomRadius * bondRadius
+                    var atomBondCenter:Number3D = Math3D.center(atomOrigin, toAtomOrigin);
+
+                    switch (bond.bondType) {
+                        case 2:
+                            var atomOrigin1:Number3D = Math3D.add(atomOrigin, atomRadius * 0.75);
+                            var atomOrigin2:Number3D = Math3D.add(atomOrigin, -atomRadius * 0.75);
+                            var atomBondCenter1:Number3D = Math3D.add(atomBondCenter, (atomRadius + toAtomRadius) * 0.375); // x / 2 * 0.75 = 0.375
+                            var atomBondCenter2:Number3D = Math3D.add(atomBondCenter, -(atomRadius + toAtomRadius) * 0.375);
+                            var toAtomOrigin1:Number3D = Math3D.add(toAtomOrigin, toAtomRadius * 0.75);
+                            var toAtomOrigin2:Number3D = Math3D.add(toAtomOrigin, -toAtomRadius * 0.75);
+                            var aLineFrom1:Line3D = new Line3D(lines,
+                                    new LineMaterial(atom.color), atomBondRadius,
+                                    Math3D.toVertex(atomOrigin1), Math3D.toVertex(atomBondCenter1));
+                            lines.addLine(aLineFrom1);
+                            var aLineFrom2:Line3D = new Line3D(lines,
+                                    new LineMaterial(atom.color), atomBondRadius,
+                                    Math3D.toVertex(atomOrigin2), Math3D.toVertex(atomBondCenter2));
+                            lines.addLine(aLineFrom2);
+                            var aLineTo1:Line3D = new Line3D(lines,
+                                    new LineMaterial(toAtom.color), atomBondRadius,
+                                    Math3D.toVertex(atomBondCenter1), Math3D.toVertex(toAtomOrigin1));
+                            lines.addLine(aLineTo1);
+                            var aLineTo2:Line3D = new Line3D(lines,
+                                    new LineMaterial(toAtom.color), atomBondRadius,
+                                    Math3D.toVertex(atomBondCenter2), Math3D.toVertex(toAtomOrigin2));
+                            lines.addLine(aLineTo2);
+                            break;
+                        default:
+                        case 1:
+                            var aLineFrom:Line3D = new Line3D(lines,
+                                    new LineMaterial(atom.color), atomBondRadius,
+                                    Math3D.toVertex(atomOrigin), Math3D.toVertex(atomBondCenter));
+                            lines.addLine(aLineFrom);
+                            var aLineTo:Line3D = new Line3D(lines,
+                                    new LineMaterial(toAtom.color), atomBondRadius,
+                                    Math3D.toVertex(atomBondCenter), Math3D.toVertex(toAtomOrigin));
+                            lines.addLine(aLineTo);
+                            break;
+                    }
+
+                }
+
+                // max vortex
+                maxX = Math.max(maxX, atomOrigin.x);
+                minX = Math.min(minX, atomOrigin.x);
+                maxAtomX = Math.max(maxAtomX, atom.x);
+                minAtomX = Math.min(minAtomX, atom.x);
+                maxY = Math.max(maxY, atomOrigin.y);
+                minY = Math.min(minY, atomOrigin.y);
+                maxAtomY = Math.max(maxAtomY, atom.y);
+                minAtomY = Math.min(minAtomY, atom.y);
+
+            }
+
+            // adjust camera view to fit molecule
+            trace("x:" + (maxX - minX) + ", y:" + (maxY - minY));
+            trace("atomX:" + (maxAtomX - minAtomX) + ", atomY:" + (maxAtomY - minAtomY));
+            var ratioX:Number = ((maxX - minX) / 2) / molDistance;
+            var ratioY:Number = ((maxY - minY) / 2) / molDistance;
+            var ratio:Number = Math.max(ratioX, ratioY);
+            trace("ratio:" + ratio);
+            camera.orthoScale /= ratio;
+            camOrthoOriginal = camera.orthoScale;
+            camDist = ratio * 2 * molDistance;
+            trace("ortho:" + camera.orthoScale);
+
+        }
+
+        private function render(e:Event):void {
+            camera.orbit(camPitch, camYaw, true, camTarget);
+            renderer.renderScene(scene, camera, viewport);
+
+        }
+
+        private function addEventListeners():void {
+            this.addEventListener(MouseEvent.MOUSE_DOWN, startOrbitOrZoom);
+            this.addEventListener(MouseEvent.MOUSE_MOVE, doOrbitOrZoom);
+            this.addEventListener(MouseEvent.MOUSE_UP, stopOrbitOrZoom);
+
+            this.systemManager.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+            this.systemManager.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+
+            this.addEventListener(Event.ENTER_FRAME, render);
+        }
+
+        /** Control handlers ************************************************** **/
+
+        private function onKeyDown(event:KeyboardEvent):void {
+            trace("Code: " + event.keyCode);
+            switch (event.keyCode) {
+                case 27: // ESC
+                    resetView(null);
+                    break;
+                case 16: // +
+                case 187: // =
+                    zoomIn(null);
+                    break;
+                case 189: // -
+                    zoomOut(null);
+                    break;
+                case 37: // left arrow
+                    orbitLeft(null);
+                    break;
+                case 38: // up arrow
+                    orbitUp(null);
+                    break;
+                case 39: // right arrow
+                    orbitRight(null);
+                    break;
+                case 40: // down arrow
+                    orbitDown(null);
+                    break;
+                case 79: // o
+                    camera.ortho = !camera.ortho;
+                    render(null);
+                    break;
+            }
+        }
+
+        private function onKeyUp(event:KeyboardEvent):void {
+
+        }
+
+        private function stopOrbitOrZoom(event:MouseEvent):void {
+            camZooming = false;
+            camOrbiting = false;
+        }
+
+        private function startOrbitOrZoom(event:MouseEvent):void {
+            mouseOrigin.x = event.stageX;
+            mouseOrigin.y = event.stageY;
+            if (event.shiftKey) {
+                camZooming = true;
+            } else {
+                camOrbiting = true;
+            }
+        }
+
+        private function doOrbitOrZoom(event:MouseEvent):void {
+            var xDelta:Number = mouseOrigin.x - event.stageX;
+            var yDelta:Number = -mouseOrigin.y + event.stageY;
+
+            if (camOrbiting) {
+                orbit(event, xDelta, yDelta);
+            } else if (camZooming) {
+                zoom(event, yDelta);
+            }
+            mouseOrigin.x = event.stageX;
+            mouseOrigin.y = event.stageY;
+
+            render(event);
+
+            event.updateAfterEvent();
+        }
+
+        private function orbit(event:MouseEvent, xDelta:Number, yDelta:Number):void {
+            camYaw += xDelta * ORBIT_TICK;
+            camPitch = Math.min(Math.max(0.001, camPitch - (yDelta * ORBIT_TICK)), HALF_CIRCLE);
+            trace("Pitch:" + camPitch + ", Yaw:" + camYaw);
+        }
+
+        private function zoom(event:MouseEvent, yDelta:Number):void {
+            if (camera.ortho) {
+                camera.orthoScale += (yDelta * 0.0005);
+                trace("OrthoScale:" + camera.orthoScale);
+            } else {
+                camDist = Math.max(10, camDist - yDelta);
+                trace("Dist:" + camDist);
+            }
+        }
+
+        private function zoomIn(event:MouseEvent):void {
+            zoom(event, 100);
+            render(event);
+        }
+
+        private function zoomOut(event:MouseEvent):void {
+            zoom(event, -100);
+            render(event);
+        }
+
+        private function orbitLeft(event:MouseEvent):void {
+            orbit(event, -10, 0);
+            render(event);
+        }
+
+        private function orbitUp(event:MouseEvent):void {
+            orbit(event, 0, 10);
+            render(event);
+        }
+
+        private function orbitDown(event:MouseEvent):void {
+            orbit(event, 0, -10);
+            render(event);
+        }
+
+        private function orbitRight(event:MouseEvent):void {
+            orbit(event, 10, 0);
+            render(event);
+        }
+
+        private function resetView(event:MouseEvent):void {
+            camera.orthoScale = camOrthoOriginal;
+            camYaw = YAW_START;
+            camPitch = PITCH_START;
+            camOrbiting = false;
+            camZooming = false;
+        }
+
+        /** Data ************************************************************* **/
+
+        var mol:String;
+        //var mol:String = MIDECAMYCIN.molfile();
+        //var mol:String = H20Water.molfile();
+
+        /** Controls ************************************************************* **/
+        private function showHideControls(event:MouseEvent):void {
+            showControls = !showControls;
+        }
+
+        private function showHelp(event:MouseEvent):void {
+            Alert.show(
+                    "Visit us at: https://sourceforge.net/projects/imolecule/\n\n" +
+                    "In order to change the view please use the following keys:\n" +
+                            "Zoom in: = (+ without holding shift)\n" +
+                            "Zoom out: -\n" +
+                            "Left, Right, Up, Down: arrow keys\n" +
+                            "Reset to origin: Esc",
+                    "iMolecule by Denis Pavlov 2010");
+        }
+
+        ]]></fx:Script>
+    <s:VGroup width="100%" height="100%">
+        <s:HGroup>
+            <s:Label id="moleculeName" styleName="moleculeName"/>
+            <s:Button label="?" click="showHelp(event)" width="30"/>
+            <s:Button label="keys" click="showHideControls(event)" width="50"/>
+            <s:HGroup width="100%" visible="{showControls}">
+                <s:Label width="10"/>
+                <s:Button label="reset view" click="resetView(event)"/>
+                <s:Label width="10"/>
+                <s:Button label="zoom in" click="zoomIn(event)"/>
+                <s:Button label="zoom out" click="zoomOut(event)"/>
+                <s:Label width="10"/>
+                <s:Button label="left" click="orbitLeft(event)"/>
+                <s:Button label="up" click="orbitUp(event)"/>
+                <s:Button label="down" click="orbitDown(event)"/>
+                <s:Button label="right" click="orbitRight(event)"/>
+            </s:HGroup>
+        </s:HGroup>
+        <mx:Canvas id="pv3dCanvas" x="0" y="0" width="100%" height="100%" borderColor="#FFFFFF"
+                   backgroundColor="#FFFFFF" alpha="1.0" backgroundAlpha="1.0">
+        </mx:Canvas>
+    </s:VGroup>
+    <fx:Declarations>
+        <fx:Boolean id="showControls">false</fx:Boolean>
+        <fx:XML id="molecules">
+            <molecules>
+                <molecule id="H"><color>0xFFFFFF</color><radius>25</radius></molecule><!-- white -->
+                <molecule id="C"><color>0xBFBFBF</color><radius>70</radius></molecule><!-- grey -->
+                <molecule id="O"><color>0x8F8F8F</color><radius>60</radius></molecule><!-- red -->
+                <molecule id="N"><color>0x8F8FFF</color><radius>65</radius></molecule><!-- lightblue -->
+                <molecule id="S"><color>0xFCC932</color><radius>100</radius></molecule><!-- sulphuryellow -->
+                <molecule id="B"><color>0x08FB01</color><radius>85</radius></molecule><!-- green -->
+                <molecule id="Cl"><color>0x08FB01</color><radius>100</radius></molecule><!-- green -->
+                <molecule id="P"><color>0xFA9D00</color><radius>100</radius></molecule><!-- orange -->
+                <molecule id="Fe"><color>0xFA9D00</color><radius>140</radius></molecule><!-- orange -->
+                <molecule id="Ba"><color>0xFA9D00</color><radius>215</radius></molecule><!-- orange -->
+                <molecule id="Na"><color>0x0000FF</color><radius>215</radius></molecule><!-- blue -->
+                <molecule id="Mg"><color>0x258A22</color><radius>215</radius></molecule><!-- forestgreen -->
+                <molecule id="Zn"><color>0xA22C2A</color><radius>135</radius></molecule><!-- brown -->
+                <molecule id="Cu"><color>0xA22C2A</color><radius>135</radius></molecule><!-- brown -->
+                <molecule id="Ni"><color>0xA22C2A</color><radius>135</radius></molecule><!-- brown -->
+                <molecule id="Br"><color>0xA22C2A</color><radius>115</radius></molecule><!-- brown -->
+                <molecule id="Ca"><color>0x818090</color><radius>180</radius></molecule><!-- darkgrey -->
+                <molecule id="Mn"><color>0x818090</color><radius>140</radius></molecule><!-- darkgrey -->
+                <molecule id="Al"><color>0x818090</color><radius>125</radius></molecule><!-- darkgrey -->
+                <molecule id="Ti"><color>0x818090</color><radius>140</radius></molecule><!-- darkgrey -->
+                <molecule id="Cr"><color>0x818090</color><radius>140</radius></molecule><!-- darkgrey -->
+                <molecule id="Ag"><color>0x818090</color><radius>160</radius></molecule><!-- darkgrey -->
+                <molecule id="F"><color>0xD7A721</color><radius>50</radius></molecule><!-- goldenrod -->
+                <molecule id="Si"><color>0xD7A721</color><radius>110</radius></molecule><!-- goldenrod -->
+                <molecule id="Au"><color>0xD7A721</color><radius>135</radius></molecule><!-- goldenrod -->
+                <molecule id="I"><color>0x9D22EF</color><radius>140</radius></molecule><!-- purple -->
+                <molecule id="Li"><color>0xAC2522</color><radius>145</radius></molecule><!-- firebrick -->
+                <molecule id="He"><color>0xFDC1CB</color><radius>28</radius></molecule><!-- pink -->
+                <molecule id="Default"><color>0xF71994</color><radius>120</radius></molecule><!-- deeppink -->
+            </molecules>
+        </fx:XML>
+    </fx:Declarations>
+
+</s:Application>
