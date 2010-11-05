@@ -1,0 +1,16 @@
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+  <target-player>10.0.0</target-player>
+  <compiler>
+    <debug>true</debug>
+    <source-path>
+      <path-element>src</path-element>
+    </source-path>
+    <library-path append="true">
+      <path-element>lib/Papervision3D_2.1.932.swc</path-element>
+    </library-path>
+  </compiler>
+  <file-specs>
+    <path-element>src/iMol.mxml</path-element>
+  </file-specs>
+  <output>C:/Documents and Settings/admin/IdeaProjects/iMol/out/production/iMol/iMol.swf</output>
+</flex-config>

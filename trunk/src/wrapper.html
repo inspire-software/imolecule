@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0014)about:internet -->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">	
+    <!-- 
+    Smart developers always View Source. 
+    
+    This application was built using Adobe Flex, an open source framework
+    for building rich Internet applications that get delivered via the
+    Flash Player or to desktops via Adobe AIR. 
+    
+    Learn more about Flex at http://flex.org 
+    // -->
+    <head>
+        <title>iMol</title>
+        <meta name="google" value="notranslate">         
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<!-- Include CSS to eliminate any default margins/padding and set the height of the html element and 
+		     the body element to 100%, because Firefox, or any Gecko based browser, interprets percentage as 
+			 the percentage of the height of its parent container, which has to be set explicitly.  Fix for
+			 Firefox 3.6 focus border issues.  Initially, don't display flashContent div so it won't show 
+			 if JavaScript disabled.
+		-->
+        <style type="text/css" media="screen"> 
+			html, body	{ height:100%; }
+			body { margin:0; padding:0; overflow:auto; text-align:center; 
+			       background-color: #C0C0C0; }   
+			object:focus { outline:none; }
+			#flashContent { display:none; }
+        </style>
+		
+		<!-- Enable Browser History by replacing useBrowserHistory tokens with two hyphens -->
+        <!-- BEGIN Browser History required section ${useBrowserHistory}>
+        <link rel="stylesheet" type="text/css" href="history/history.css" />
+        <script type="text/javascript" src="history/history.js"></script>
+        <!${useBrowserHistory} END Browser History required section -->
+
+        <!-- Water molecule
+        <script type="text/javascript">
+            var flashvars = {
+                mol :
+                "H2O Water 7732185\n" +
+                "##CCCBDB11 51005:49\n" +
+                "Geometry Optimized at PM3\n" +
+                "  3  2  0  0  0  0  0  0  0  0    V2000\n" +
+                "    0.0000    0.0000    0.1402 O  0000000000000000000\n" +
+                "    0.0000   -0.7678   -0.4207 H  0000000000000000000\n" +
+                "    0.0000    0.7678   -0.4207 H  0000000000000000000\n" +
+                "  1  2  1  0     0  0\n" +
+                "  1  3  1  0     0  0\n"};
+
+        </script>
+        -->
+        <script type="text/javascript">
+            var flashvars = {
+                mol :
+                "MIDECAMYCIN\n" +
+                "          12310906202D 1   1.00000     0.00000     0\n" +
+                "  \n" +
+                " 57 59  0     1  0            999 V2000 \n" +
+                "   -1.0172    0.8897    0.0000 C   0  0  2  0  0  0           0  0  0\n" +
+                "   -1.4276    0.6000    0.0000 C   0  0  2  0  0  0           0  0  0\n" +
+                "   -1.0172    1.4690    0.0000 C   0  0  2  0  0  0           0  0  0\n" +
+                "   -0.3103    0.6103    0.0000 O   0  0  0  0  0  0           0  0  0\n" +
+                "   -1.4276    0.0069    0.0000 C   0  0  1  0  0  0           0  0  0\n" +
+                "   -2.0000    0.9172    0.0000 O   0  0  0  0  0  0           0  0  0\n" +
+                "   -1.5690    1.7690    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "   -0.5966    1.9103    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "    0.0655    0.1897    0.0000 C   0  0  1  0  0  0           0  0  0\n" +
+                "   -1.9345   -0.2655    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "   -0.8379   -0.3448    0.0000 O   0  0  0  0  0  0           0  0  0\n" +
+                "   -2.0000    1.5724    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "   -1.5690    2.3897    0.0000 C   0  0  2  0  0  0           0  0  0\n" +
+                "   -0.0103    1.7690    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "    0.6655    0.2897    0.0000 C   0  0  1  0  0  0           0  0  0\n" +
+                "   -0.1448   -0.3793    0.0000 O   0  0  0  0  0  0           0  0  0\n" +
+                "   -2.4241    0.0345    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "   -0.8483   -0.9483    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "   -2.1414    2.6690    0.0000 C   0  0  2  0  0  0           0  0  0\n" +
+                "   -1.0552    2.7138    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "    0.4034    2.2103    0.0000 O   0  0  0  0  0  0           0  0  0\n" +
+                "    1.0517   -0.1793    0.0000 C   0  0  2  0  0  0           0  0  0\n" +
+                "    0.8793    0.8517    0.0000 O   0  0  0  0  0  0           0  0  0\n" +
+                "    0.2414   -0.8483    0.0000 C   0  0  1  0  0  0           0  0  0\n" +
+                "   -2.9069   -0.2828    0.0000 O   0  0  0  0  0  0           0  0  0\n" +
+                "   -2.4172    0.6517    0.0000 O   0  0  0  0  0  0           0  0  0\n" +
+                "   -0.3310   -1.2586    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "   -1.3759   -1.2448    0.0000 O   0  0  0  0  0  0           0  0  0\n" +
+                "   -2.6310    2.3172    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "   -2.1966    3.2724    0.0000 O   0  0  0  0  0  0           0  0  0\n" +
+                "    0.8379   -0.7483    0.0000 C   0  0  1  0  0  0           0  0  0\n" +
+                "    1.6483   -0.0828    0.0000 N   0  0  3  0  0  0           0  0  0\n" +
+                "    0.0276   -1.4103    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "   -3.5138   -0.0724    0.0000 C   0  0  1  0  0  0           0  0  0\n" +
+                "   -0.3276   -1.9448    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "   -2.6241    1.6759    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "    1.2241   -1.2138    0.0000 O   0  0  0  0  0  0           0  0  0\n" +
+                "    2.0310   -0.5483    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "    1.8621    0.4828    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "   -3.5103    0.5276    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "   -4.0000   -0.4310    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "   -3.0655    1.4345    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "    1.8000   -1.3931    0.0000 C   0  0  1  0  0  0           0  0  0\n" +
+                "   -3.0621    0.7759    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "    2.2448   -0.9793    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "    1.9379   -1.9828    0.0000 O   0  0  0  0  0  0           0  0  0\n" +
+                "    2.8241   -1.1621    0.0000 C   0  0  1  0  0  0           0  0  0\n" +
+                "    2.5138   -2.1655    0.0000 C   0  0  2  0  0  0           0  0  0\n" +
+                "    2.9586   -1.7517    0.0000 C   0  0  2  0  0  0           0  0  0\n" +
+                "    2.3828   -0.5966    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "    3.3655   -0.7655    0.0000 O   0  0  0  0  0  0           0  0  0\n" +
+                "    2.6483   -2.7517    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "    3.5345   -1.9276    0.0000 O   0  0  0  0  0  0           0  0  0\n" +
+                "    3.9759   -1.5138    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "    4.5517   -1.6897    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "    3.8379   -0.9276    0.0000 O   0  0  0  0  0  0           0  0  0\n" +
+                "    4.6897   -2.2793    0.0000 C   0  0  0  0  0  0           0  0  0\n" +
+                "  1  2  1  0     0  0\n" +
+                "  1  3  1  0     0  0\n" +
+                "  1  4  1  6     0  0\n" +
+                "  2  5  1  0     0  0\n" +
+                "  2  6  1  6     0  0\n" +
+                "  3  7  1  0     0  0\n" +
+                "  3  8  1  6     0  0\n" +
+                "  9  4  1  1     0  0\n" +
+                "  5 10  1  0     0  0\n" +
+                "  5 11  1  6     0  0\n" +
+                "  6 12  1  0     0  0\n" +
+                "  7 13  1  0     0  0\n" +
+                "  8 14  1  0     0  0\n" +
+                "  9 15  1  0     0  0\n" +
+                "  9 16  1  0     0  0\n" +
+                " 10 17  1  0     0  0\n" +
+                " 11 18  1  0     0  0\n" +
+                " 13 19  1  0     0  0\n" +
+                " 13 20  1  6     0  0\n" +
+                " 14 21  2  0     0  0\n" +
+                " 15 22  1  0     0  0\n" +
+                " 15 23  1  6     0  0\n" +
+                " 16 24  1  0     0  0\n" +
+                " 17 25  1  0     0  0\n" +
+                " 17 26  2  0     0  0\n" +
+                " 18 27  1  0     0  0\n" +
+                " 18 28  2  0     0  0\n" +
+                " 19 29  1  0     0  0\n" +
+                " 19 30  1  6     0  0\n" +
+                " 22 31  1  0     0  0\n" +
+                " 22 32  1  1     0  0\n" +
+                " 24 33  1  1     0  0\n" +
+                " 25 34  1  0     0  0\n" +
+                " 27 35  1  0     0  0\n" +
+                " 29 36  2  0     0  0\n" +
+                " 31 37  1  6     0  0\n" +
+                " 32 38  1  0     0  0\n" +
+                " 32 39  1  0     0  0\n" +
+                " 34 40  1  0     0  0\n" +
+                " 34 41  1  6     0  0\n" +
+                " 36 42  1  0     0  0\n" +
+                " 43 37  1  1     0  0\n" +
+                " 40 44  1  0     0  0\n" +
+                " 43 45  1  0     0  0\n" +
+                " 43 46  1  0     0  0\n" +
+                " 45 47  1  0     0  0\n" +
+                " 46 48  1  0     0  0\n" +
+                " 47 49  1  0     0  0\n" +
+                " 47 50  1  0     0  0\n" +
+                " 47 51  1  1     0  0\n" +
+                " 48 52  1  6     0  0\n" +
+                " 49 53  1  1     0  0\n" +
+                " 53 54  1  0     0  0\n" +
+                " 54 55  1  0     0  0\n" +
+                " 54 56  2  0     0  0\n" +
+                " 55 57  1  0     0  0\n" +
+                " 24 31  1  0     0  0\n" +
+                " 42 44  2  0     0  0\n" +
+                " 48 49  1  0     0  0\n" +
+                "M  END"};
+
+        </script>
+		    
+        <script type="text/javascript" src="swfobject.js"></script>
+        <script type="text/javascript">
+            <!-- For version detection, set to min. required Flash Player version, or 0 (or 0.0.0), for no version detection. --> 
+            var swfVersionStr = "9.0.124";
+            <!-- To use express install, set to playerProductInstall.swf, otherwise the empty string. -->
+            var xiSwfUrlStr = "${expressInstallSwf}";
+            var params = {};
+            params.quality = "high";
+            params.bgcolor = "#C0C0C0";
+            params.allowscriptaccess = "sameDomain";
+            params.allowfullscreen = "true";
+            var attributes = {};
+            attributes.id = "iMol";
+            attributes.name = "iMol";
+            attributes.align = "middle";
+            swfobject.embedSWF(
+                "iMol.swf", "flashContent", 
+                "800", "600", 
+                swfVersionStr, xiSwfUrlStr, 
+                flashvars, params, attributes);
+			<!-- JavaScript enabled so display the flashContent div in case it is not replaced with a swf object. -->
+			swfobject.createCSS("#flashContent", "display:block;text-align:left;");
+        </script>
+    </head>
+    <body>
+        <!-- SWFObject's dynamic embed method replaces this alternative HTML content with Flash content when enough 
+			 JavaScript and Flash plug-in support is available. The div is initially hidden so that it doesn't show
+			 when JavaScript is disabled.
+		-->
+        <div id="flashContent">
+        	<p>
+	        	To view this page ensure that Adobe Flash Player version 
+				9.0.124 or greater is installed. 
+			</p>
+			<script type="text/javascript"> 
+				var pageHost = ((document.location.protocol == "https:") ? "https://" :	"http://"); 
+				document.write("<a href='http://www.adobe.com/go/getflashplayer'><img src='" 
+								+ pageHost + "www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a>" ); 
+			</script> 
+        </div>
+	   	
+       	<noscript>
+            <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="800" height="600" id="iMol">
+                <param name="movie" value="iMol.swf" />
+                <param name="quality" value="high" />
+                <param name="bgcolor" value="#C0C0C0" />
+                <param name="allowScriptAccess" value="sameDomain" />
+                <param name="allowFullScreen" value="true" />
+                <!--[if !IE]>-->
+                <object type="application/x-shockwave-flash" data="iMol.swf" width="800" height="600">
+                    <param name="quality" value="high" />
+                    <param name="bgcolor" value="#C0C0C0" />
+                    <param name="allowScriptAccess" value="sameDomain" />
+                    <param name="allowFullScreen" value="true" />
+                <!--<![endif]-->
+                <!--[if gte IE 6]>-->
+                	<p> 
+                		Either scripts and active content are not permitted to run or Adobe Flash Player version
+                		9.0.124 or greater is not installed.
+                	</p>
+                <!--<![endif]-->
+                    <a href="http://www.adobe.com/go/getflashplayer">
+                        <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash Player" />
+                    </a>
+                <!--[if !IE]>-->
+                </object>
+                <!--<![endif]-->
+            </object>
+	    </noscript>		
+   </body>
+</html>
