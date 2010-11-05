@@ -1,5 +1,14 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~ Author: Denis Pavlov
+  ~ Web: http://www.inspire-software.com/
+  ~ iMolecule is an open source projects that is distributed on AS IS basis with no warranty under Lesser GPL or MIT license
+  -->
+
 <component name="CopyrightManager">
-  <settings default="">
-    <module2copyright />
+  <settings default="iMolecule">
+    <module2copyright>
+      <element module="All" copyright="iMolecule" />
+    </module2copyright>
   </settings>
 </component>

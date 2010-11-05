@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2010.
+ * Author: Denis Pavlov
+ * Web: http://www.inspire-software.com/
+ * iMolecule is an open source projects that is distributed on AS IS basis with no warranty under Lesser GPL or MIT license
+ */
+
 package dp.flex.imol {
 import org.papervision3d.core.geom.renderables.Vertex3D;
 import org.papervision3d.core.math.Number3D;

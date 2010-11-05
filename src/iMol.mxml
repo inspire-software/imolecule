@@ -1,4 +1,11 @@
 <?xml version="1.0"?>
+<!--
+  ~ Copyright (c) 2010.
+  ~ Author: Denis Pavlov
+  ~ Web: http://www.inspire-software.com/
+  ~ iMolecule is an open source projects that is distributed on AS IS basis with no warranty under Lesser GPL or MIT license
+  -->
+
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
                xmlns:s="library://ns.adobe.com/flex/spark"
                xmlns:mx="library://ns.adobe.com/flex/mx"
