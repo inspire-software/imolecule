@@ -19,7 +19,7 @@ public class MoleculeBuilder {
     private var _molSpec:XML;
 
     public function MoleculeBuilder(molFileContents:String, molSpec:XML) {
-        _molFileContents = molFileContents.replace("\r", "");
+        _molFileContents = molFileContents != null ? molFileContents.replace("\r", "") : "";
         _molSpec = molSpec;
     }
 

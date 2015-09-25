@@ -24,7 +24,6 @@
          }
     </fx:Style>
     <fx:Script><![CDATA[
-
         import dp.flex.imol.Math3D;
         import dp.flex.imol.builder.MoleculeBuilder;
 
@@ -147,81 +146,84 @@
 
             var builder:MoleculeBuilder = new MoleculeBuilder(mol, molecules);
             var molecule:Molecule = builder.build();
-            moleculeName.text = molecule.name;
 
-            for each (var atom:Atom in molecule.atoms) {
+            if (molecule != null) {
+                moleculeName.text = molecule.name;
 
-                // atom sphere
-                var atomRadius:Number = atom.radius * molRadius;
-                var atomOrigin:Number3D = Math3D.point(atom.x, atom.y, atom.z, molDistance);
-                var aSphere:Sphere = new Sphere(new ColorMaterial(atom.color), atomRadius, 14, 14);
-                aSphere.position = atomOrigin;
-                camTarget.addChild(aSphere);
-                // sphere label
-                var aLabel:Text3D = new Text3D(atom.name, font, letterMaterial);
-                aLabel.position = new Number3D(atomRadius * 1.5, atomRadius, 0);
-                aLabel.scale = 0.3;
-                aSphere.addChild(aLabel);
+                for each (var atom:Atom in molecule.atoms) {
 
-                //trace("Atom [" + atom.name + "] x:" + aSphere.x + ",y:" + aSphere.y + ",z:" + aSphere.z);
-                // Bonds
-                for each (var bond:Bond in atom.bondsFrom) {
-                    var toAtom:Atom = bond.atomTo;
-                    var toAtomOrigin:Number3D = Math3D.point(toAtom.x, toAtom.y, toAtom.z, molDistance);
-                    var toAtomRadius:Number = toAtom.radius * molRadius;
-                    var atomBondRadius:Number = atomRadius * bondRadius
-                    var atomBondCenter:Number3D = Math3D.center(atomOrigin, toAtomOrigin);
+                    // atom sphere
+                    var atomRadius:Number = atom.radius * molRadius;
+                    var atomOrigin:Number3D = Math3D.point(atom.x, atom.y, atom.z, molDistance);
+                    var aSphere:Sphere = new Sphere(new ColorMaterial(atom.color), atomRadius, 14, 14);
+                    aSphere.position = atomOrigin;
+                    camTarget.addChild(aSphere);
+                    // sphere label
+                    var aLabel:Text3D = new Text3D(atom.name, font, letterMaterial);
+                    aLabel.position = new Number3D(atomRadius * 1.5, atomRadius, 0);
+                    aLabel.scale = 0.3;
+                    aSphere.addChild(aLabel);
 
-                    switch (bond.bondType) {
-                        case 2:
-                            var atomOrigin1:Number3D = Math3D.add(atomOrigin, atomRadius * 0.75);
-                            var atomOrigin2:Number3D = Math3D.add(atomOrigin, -atomRadius * 0.75);
-                            var atomBondCenter1:Number3D = Math3D.add(atomBondCenter, (atomRadius + toAtomRadius) * 0.375); // x / 2 * 0.75 = 0.375
-                            var atomBondCenter2:Number3D = Math3D.add(atomBondCenter, -(atomRadius + toAtomRadius) * 0.375);
-                            var toAtomOrigin1:Number3D = Math3D.add(toAtomOrigin, toAtomRadius * 0.75);
-                            var toAtomOrigin2:Number3D = Math3D.add(toAtomOrigin, -toAtomRadius * 0.75);
-                            var aLineFrom1:Line3D = new Line3D(lines,
-                                    new LineMaterial(atom.color), atomBondRadius,
-                                    Math3D.toVertex(atomOrigin1), Math3D.toVertex(atomBondCenter1));
-                            lines.addLine(aLineFrom1);
-                            var aLineFrom2:Line3D = new Line3D(lines,
-                                    new LineMaterial(atom.color), atomBondRadius,
-                                    Math3D.toVertex(atomOrigin2), Math3D.toVertex(atomBondCenter2));
-                            lines.addLine(aLineFrom2);
-                            var aLineTo1:Line3D = new Line3D(lines,
-                                    new LineMaterial(toAtom.color), atomBondRadius,
-                                    Math3D.toVertex(atomBondCenter1), Math3D.toVertex(toAtomOrigin1));
-                            lines.addLine(aLineTo1);
-                            var aLineTo2:Line3D = new Line3D(lines,
-                                    new LineMaterial(toAtom.color), atomBondRadius,
-                                    Math3D.toVertex(atomBondCenter2), Math3D.toVertex(toAtomOrigin2));
-                            lines.addLine(aLineTo2);
-                            break;
-                        default:
-                        case 1:
-                            var aLineFrom:Line3D = new Line3D(lines,
-                                    new LineMaterial(atom.color), atomBondRadius,
-                                    Math3D.toVertex(atomOrigin), Math3D.toVertex(atomBondCenter));
-                            lines.addLine(aLineFrom);
-                            var aLineTo:Line3D = new Line3D(lines,
-                                    new LineMaterial(toAtom.color), atomBondRadius,
-                                    Math3D.toVertex(atomBondCenter), Math3D.toVertex(toAtomOrigin));
-                            lines.addLine(aLineTo);
-                            break;
+                    //trace("Atom [" + atom.name + "] x:" + aSphere.x + ",y:" + aSphere.y + ",z:" + aSphere.z);
+                    // Bonds
+                    for each (var bond:Bond in atom.bondsFrom) {
+                        var toAtom:Atom = bond.atomTo;
+                        var toAtomOrigin:Number3D = Math3D.point(toAtom.x, toAtom.y, toAtom.z, molDistance);
+                        var toAtomRadius:Number = toAtom.radius * molRadius;
+                        var atomBondRadius:Number = atomRadius * bondRadius
+                        var atomBondCenter:Number3D = Math3D.center(atomOrigin, toAtomOrigin);
+
+                        switch (bond.bondType) {
+                            case 2:
+                                var atomOrigin1:Number3D = Math3D.add(atomOrigin, atomRadius * 0.75);
+                                var atomOrigin2:Number3D = Math3D.add(atomOrigin, -atomRadius * 0.75);
+                                var atomBondCenter1:Number3D = Math3D.add(atomBondCenter, (atomRadius + toAtomRadius) * 0.375); // x / 2 * 0.75 = 0.375
+                                var atomBondCenter2:Number3D = Math3D.add(atomBondCenter, -(atomRadius + toAtomRadius) * 0.375);
+                                var toAtomOrigin1:Number3D = Math3D.add(toAtomOrigin, toAtomRadius * 0.75);
+                                var toAtomOrigin2:Number3D = Math3D.add(toAtomOrigin, -toAtomRadius * 0.75);
+                                var aLineFrom1:Line3D = new Line3D(lines,
+                                        new LineMaterial(atom.color), atomBondRadius,
+                                        Math3D.toVertex(atomOrigin1), Math3D.toVertex(atomBondCenter1));
+                                lines.addLine(aLineFrom1);
+                                var aLineFrom2:Line3D = new Line3D(lines,
+                                        new LineMaterial(atom.color), atomBondRadius,
+                                        Math3D.toVertex(atomOrigin2), Math3D.toVertex(atomBondCenter2));
+                                lines.addLine(aLineFrom2);
+                                var aLineTo1:Line3D = new Line3D(lines,
+                                        new LineMaterial(toAtom.color), atomBondRadius,
+                                        Math3D.toVertex(atomBondCenter1), Math3D.toVertex(toAtomOrigin1));
+                                lines.addLine(aLineTo1);
+                                var aLineTo2:Line3D = new Line3D(lines,
+                                        new LineMaterial(toAtom.color), atomBondRadius,
+                                        Math3D.toVertex(atomBondCenter2), Math3D.toVertex(toAtomOrigin2));
+                                lines.addLine(aLineTo2);
+                                break;
+                            default:
+                            case 1:
+                                var aLineFrom:Line3D = new Line3D(lines,
+                                        new LineMaterial(atom.color), atomBondRadius,
+                                        Math3D.toVertex(atomOrigin), Math3D.toVertex(atomBondCenter));
+                                lines.addLine(aLineFrom);
+                                var aLineTo:Line3D = new Line3D(lines,
+                                        new LineMaterial(toAtom.color), atomBondRadius,
+                                        Math3D.toVertex(atomBondCenter), Math3D.toVertex(toAtomOrigin));
+                                lines.addLine(aLineTo);
+                                break;
+                        }
+
                     }
 
+                    // max vortex
+                    maxX = Math.max(maxX, atomOrigin.x);
+                    minX = Math.min(minX, atomOrigin.x);
+                    maxAtomX = Math.max(maxAtomX, atom.x);
+                    minAtomX = Math.min(minAtomX, atom.x);
+                    maxY = Math.max(maxY, atomOrigin.y);
+                    minY = Math.min(minY, atomOrigin.y);
+                    maxAtomY = Math.max(maxAtomY, atom.y);
+                    minAtomY = Math.min(minAtomY, atom.y);
+
                 }
-
-                // max vortex
-                maxX = Math.max(maxX, atomOrigin.x);
-                minX = Math.min(minX, atomOrigin.x);
-                maxAtomX = Math.max(maxAtomX, atom.x);
-                minAtomX = Math.min(minAtomX, atom.x);
-                maxY = Math.max(maxY, atomOrigin.y);
-                minY = Math.min(minY, atomOrigin.y);
-                maxAtomY = Math.max(maxAtomY, atom.y);
-                minAtomY = Math.min(minAtomY, atom.y);
-
             }
 
             // adjust camera view to fit molecule
@@ -394,13 +396,12 @@
             Alert.show(
                     "Visit us at: https://sourceforge.net/projects/imolecule/\n\n" +
                     "In order to change the view please use the following keys:\n" +
-                            "Zoom in: = (+ without holding shift)\n" +
-                            "Zoom out: -\n" +
-                            "Left, Right, Up, Down: arrow keys\n" +
-                            "Reset to origin: Esc",
+                    "Zoom in: = (+ without holding shift)\n" +
+                    "Zoom out: -\n" +
+                    "Left, Right, Up, Down: arrow keys\n" +
+                    "Reset to origin: Esc",
                     "iMolecule by Denis Pavlov 2010");
         }
-
         ]]></fx:Script>
     <s:VGroup width="100%" height="100%">
         <s:HGroup>
