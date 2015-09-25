@@ -73,10 +73,10 @@
         private var molDistance:Number = 300; // half of stage
 
         /** Camera */
-        private static const HALF_CIRCLE = 180;
-        private static const ORBIT_TICK = 2;
-        private static const PITCH_START = 90;
-        private static const YAW_START = -90;
+        private static const HALF_CIRCLE:Number = 180;
+        private static const ORBIT_TICK:Number = 2;
+        private static const PITCH_START:Number = 90;
+        private static const YAW_START:Number = -90;
         private var camYaw:Number = YAW_START;
         private var camPitch:Number = PITCH_START;
         private var camDist:Number = 2000; // distance for non-ortho camera
@@ -93,6 +93,8 @@
 
         private function init():void {
             this.mol = FlexGlobals.topLevelApplication.parameters.mol;
+//            this.mol = MIDECAMYCIN.molfile();
+//            this.mol = H20Water.molfile();
             init3D();
             mouseOrigin = new Point(); // original mouse position
         }
@@ -383,9 +385,7 @@
 
         /** Data ************************************************************* **/
 
-        var mol:String;
-        //var mol:String = MIDECAMYCIN.molfile();
-        //var mol:String = H20Water.molfile();
+        private var mol:String;
 
         /** Controls ************************************************************* **/
         private function showHideControls(event:MouseEvent):void {
@@ -394,8 +394,8 @@
 
         private function showHelp(event:MouseEvent):void {
             Alert.show(
-                    "Visit us at: https://sourceforge.net/projects/imolecule/\n\n" +
-                    "In order to change the view please use the following keys:\n" +
+                    "Visit us at: https://github.com/inspire-software/imolecule/\n\n" +
+                    "In order to change the camera view please use the following keys:\n" +
                     "Zoom in: = (+ without holding shift)\n" +
                     "Zoom out: -\n" +
                     "Left, Right, Up, Down: arrow keys\n" +

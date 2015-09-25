@@ -12,8 +12,8 @@ import dp.flex.imol.model.Molecule;
 
 public class MoleculeBuilder {
 
-    private static const V2000 = "V2000";
-    private static const TERM = "M  END";
+    private static const V2000:String = "V2000";
+    private static const TERM:String = "M  END";
 
     private var _molFileContents:String;
     private var _molSpec:XML;
@@ -31,8 +31,8 @@ public class MoleculeBuilder {
         var name:String = lines[0];
 
         var molecule:Molecule = null;
-        var atomsCount = 0;
-        var bondsCount = 0;
+        var atomsCount:Number = 0;
+        var bondsCount:Number = 0;
         for (var i:int = 1; i < lines.length || lines[i] == TERM; i++) {
 
             var line:String = lines[i];
@@ -53,7 +53,7 @@ public class MoleculeBuilder {
 
     private function parseAtomPosition(molecule:Molecule, position:String):void {
         var posParts:Array = position.split(/(\s+)/);
-        var name = posParts[8];
+        var name:String = posParts[8];
         var moleculeXML:XML = getMoleculeXML(name);
         var radius:Number = moleculeXML.radius;
         var color:Number = moleculeXML.color;
